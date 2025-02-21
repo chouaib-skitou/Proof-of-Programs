@@ -9,21 +9,16 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
-      # 1) Check out the repository so we have access to the Dockerfile and .c files
-      - uses: actions/checkout@v2
+      - name: Check out repository
+        uses: actions/checkout@v2
 
-      # 2) Build the Docker image
       - name: Build Docker image
-        run: |
-          docker build -t my-frama-c .
+        run: docker build -t my-frama-c .
 
-      # 3) Run Frama-C proofs inside the container
       - name: Run WP proofs
         run: |
           # For each .c file, run frama-c -wp
-          # (Adjust or add more files as needed)
           docker run --rm my-frama-c frama-c -wp maxint.c
           docker run --rm my-frama-c frama-c -wp maxint3.c
           docker run --rm my-frama-c frama-c -wp loops.c
