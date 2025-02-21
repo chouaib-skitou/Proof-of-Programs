@@ -11,22 +11,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Build Docker image
-        run: docker build -t my-frama-c .
-
-      - name: Run WP proofs
+      - name: Install dependencies
         run: |
-          # For each .c file, run frama-c -wp
-          docker run --rm my-frama-c frama-c -wp maxint.c
-          docker run --rm my-frama-c frama-c -wp maxint3.c
-          docker run --rm my-frama-c frama-c -wp loops.c
-          docker run --rm my-frama-c frama-c -wp abs.c
-          docker run --rm my-frama-c frama-c -wp sum.c
-          docker run --rm my-frama-c frama-c -wp foo.c
-          docker run --rm my-frama-c frama-c -wp getIndexMin.c
-          docker run --rm my-frama-c frama-c -wp allZeros.c
-          docker run --rm my-frama-c frama-c -wp equal.c
-          docker run --rm my-frama-c frama-c -wp fill.c
-          docker run --rm my-frama-c frama-c -wp fact.c
+          sudo apt-get update
+          sudo apt-get install -y opam
+          opam init --disable-sandboxing --yes
+          eval $(opam env)
+          opam update --yes
+          opam upgrade --yes
+
+      - name: Build and Test
+        run: |
+          opam switch create 4.08.1_fc22 ocaml-base-compiler.4.08.1 --yes
+          eval $(opam env)
+          opam install depext --yes
+          opam depext frama-c.22.0 --yes
+          opam install alt-ergo.2.3.0 why3.1.3.3 frama-c.22.0 frama-c-metacsl.0.1 --yes
+          why3 config --detect
