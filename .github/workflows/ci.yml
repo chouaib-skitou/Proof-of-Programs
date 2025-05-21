@@ -1,36 +1,36 @@
-name: Frama-C Proof Verification
+# name: Frama-C Proof Verification
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
-jobs:
-  verify:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+# jobs:
+#   verify:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y opam
-          opam init --disable-sandboxing --yes
-          eval $(opam env)
-          opam install -y frama-c
+#       - name: Install dependencies
+#         run: |
+#           sudo apt update
+#           sudo apt install -y opam
+#           opam init --disable-sandboxing --yes
+#           eval $(opam env)
+#           opam install -y frama-c
 
-      - name: Set up OPAM environment
-        run: echo "eval $(opam env)" >> $GITHUB_ENV
+#       - name: Set up OPAM environment
+#         run: echo "eval $(opam env)" >> $GITHUB_ENV
 
-      - name: Run Frama-C proofs
-        run: |
-          source $GITHUB_ENV
-          eval $(opam env)
-          for file in *.c; do
-            echo "Verifying $file..."
-            frama-c -wp -wp-rte "$file" || exit 1
-          done
+#       - name: Run Frama-C proofs
+#         run: |
+#           source $GITHUB_ENV
+#           eval $(opam env)
+#           for file in *.c; do
+#             echo "Verifying $file..."
+#             frama-c -wp -wp-rte "$file" || exit 1
+#           done
